@@ -13,7 +13,7 @@ int main(void)
 
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2); // 中断控制器分组设置
 
-	// Delay_Init();
+
 	Usart1_Init(115200);
 	Usart2_Init(115200);
 
