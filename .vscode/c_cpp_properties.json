@@ -1,0 +1,27 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "C:/Keil_v5/ARM/ARMCC/include",
+                "F:\\STM32Project\\ProjectTemplate\\Library",
+                "F:\\STM32Project\\ProjectTemplate\\Start"
+
+
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE",
+
+
+                "USE_STDPERIPH_DRIVER"
+            ],
+            "cStandard": "c17",
+            "cppStandard": "gnu++14",
+            "intelliSenseMode": "windows-gcc-x64"
+        }
+    ],
+    "version": 4
+}
