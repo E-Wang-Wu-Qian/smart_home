@@ -112,7 +112,6 @@ void USART2_IRQHandler(void)
 
         esp8266_buf[esp8266_cnt++] = USART_ReceiveData(USART2);
 
-        // esp8266_buf[esp8266_cnt++] = USART2->DR;
 
         USART_ClearFlag(USART2, USART_FLAG_RXNE);
         // USART_ClearITPendingBit(USART2, USART_IT_RXNE);
