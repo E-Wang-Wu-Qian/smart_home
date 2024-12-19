@@ -18,7 +18,7 @@ int main(void)
 	Usart2_Init(115200);
 
 	UsartPrintf(USART1, " USART init OK\r\n");
-	// UsartPrintf(USART2, "AT+RESTORE\r\n");
+
 
 	ESP8266_Init();
 
