@@ -151,22 +151,11 @@ void UsartPrintf(USART_TypeDef *USARTx, char *fmt, ...)
     while (*pStr != 0)
     {
         USART_SendData(USARTx, *pStr++);
-        while (USART_GetFlagStatus(USARTx, USART_FLAG_TC) == RESET)
-            ;
+        while (USART_GetFlagStatus(USARTx, USART_FLAG_TC) == RESET);
     }
 }
 
-// void USART1_IRQHandler(void)
-// {
 
-//     if (USART_GetITStatus(USART1, USART_IT_RXNE) == SET) // 接收中断
-//     {
-//         UsartPrintf(USART1, "USART1_IRQHandler\r\n");
-//         uint8_t ch = USART_ReceiveData(USART1);
-//        // USART_ClearITPendingBit(USART1, USART_IT_RXNE);
-//        USART_ClearFlag(USART1, USART_FLAG_RXNE);
-//     }
-// }
 
 void USART1_IRQHandler(void)
 {
