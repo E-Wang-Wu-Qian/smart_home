@@ -4,7 +4,7 @@
 #include "Usart.h"
 #include "esp8266.h"
 
-// C库
+
 #include <string.h>
 int main(void)
 {
