@@ -3,13 +3,14 @@
 #include "OLED.h"
 #include "Usart.h"
 #include "esp8266.h"
-
+#include "LED.h"
+#include "Key.h"
 
 #include <string.h>
 int main(void)
 {
 
-	// OLED_Init();
+	OLED_Init();
 
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2); // 中断控制器分组设置
 
@@ -19,6 +20,8 @@ int main(void)
 
 	UsartPrintf(USART1, " USART init OK\r\n");
 
+	Key_Init();
+	LED_Init();
 
 	ESP8266_Init();
 

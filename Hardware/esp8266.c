@@ -56,7 +56,7 @@ _Bool ESP8266_SendCmd(char *cmd, char *res)
     {
         if (ESP8266_WaitReceive() == REV_OK)
         {
-            // UsartPrintf(USART1, "ESP8266_WaitReceive...\r\n");
+    
             if (strstr((const char *)esp8266_buf, res) != NULL) // 如果检索到关键词
             {
                 // UsartPrintf(USART1, "ESP8266 Wait OK...\r\n");
@@ -68,8 +68,6 @@ _Bool ESP8266_SendCmd(char *cmd, char *res)
             }
         }
 
-        // UsartPrintf(USART1, "ESP8266_SendCmd...\r\n");
-        //  TODO
         Delay_ms(10);
     }
 
@@ -104,14 +102,11 @@ void USART2_IRQHandler(void)
 
     if (USART_GetITStatus(USART2, USART_IT_RXNE) == SET)
     {
-        // UsartPrintf(USART1, "USART2_IRQHandler!!!\r\n");
 
         if (esp8266_cnt >= sizeof(esp8266_buf))
             esp8266_cnt = 0;
         
-
         esp8266_buf[esp8266_cnt++] = USART_ReceiveData(USART2);
-
 
         USART_ClearFlag(USART2, USART_FLAG_RXNE);
         // USART_ClearITPendingBit(USART2, USART_IT_RXNE);

@@ -32,4 +32,6 @@
 .\objects\main.o: .\Hardware\OLED.h
 .\objects\main.o: .\Hardware\Usart.h
 .\objects\main.o: .\Hardware\esp8266.h
+.\objects\main.o: .\Hardware\LED.h
+.\objects\main.o: .\Hardware\Key.h
 .\objects\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h

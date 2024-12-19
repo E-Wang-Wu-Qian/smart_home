@@ -4,6 +4,6 @@
 void Key_Init(void);
 
 
-uint8_t Key_Get(void);
+// uint8_t Key_Get(void);
 
 #endif
