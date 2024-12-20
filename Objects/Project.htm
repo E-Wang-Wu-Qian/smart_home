@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\Objects\Project.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Objects\Project.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Thu Dec 19 20:48:16 2024
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Fri Dec 20 17:31:45 2024
 <BR><P>
 <H3>Maximum Stack Usage =        424 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -973,7 +973,8 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[9d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Delay_us
 </UL>
-<BR>[Called By]<UL><LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ESP8266_SendCmd
+<BR>[Called By]<UL><LI><a href="#[6f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+<LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ESP8266_SendCmd
 <LI><a href="#[a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ESP8266_Init
 <LI><a href="#[15]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI1_IRQHandler
 </UL>
@@ -1013,7 +1014,8 @@ Global Symbols
 <LI><a href="#[9e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ESP8266_Clear
 <LI><a href="#[9c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Delay_ms
 </UL>
-<BR>[Called By]<UL><LI><a href="#[a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ESP8266_Init
+<BR>[Called By]<UL><LI><a href="#[6f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+<LI><a href="#[a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ESP8266_Init
 </UL>
 
 <P><STRONG><a name="[a5]"></a>ESP8266_WaitReceive</STRONG> (Thumb, 42 bytes, Stack size 0 bytes, esp8266.o(i.ESP8266_WaitReceive))
@@ -1374,7 +1376,7 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__printf
 </UL>
 
-<P><STRONG><a name="[6f]"></a>main</STRONG> (Thumb, 52 bytes, Stack size 0 bytes, main.o(i.main))
+<P><STRONG><a name="[6f]"></a>main</STRONG> (Thumb, 90 bytes, Stack size 0 bytes, main.o(i.main))
 <BR><BR>[Stack]<UL><LI>Max Depth = 424 + Unknown Stack Size
 <LI>Call Chain = main &rArr; ESP8266_Init &rArr; UsartPrintf &rArr; vsnprintf &rArr; _printf_char_common &rArr; __printf
 </UL>
@@ -1382,10 +1384,12 @@ Global Symbols
 <LI><a href="#[c8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Usart2_Init
 <LI><a href="#[c5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Usart1_Init
 <LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UsartPrintf
+<LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ESP8266_SendCmd
 <LI><a href="#[a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ESP8266_Init
 <LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_Init
 <LI><a href="#[ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Key_Init
 <LI><a href="#[b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;LED_Init
+<LI><a href="#[9c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Delay_ms
 </UL>
 <BR>[Called By]<UL><LI><a href="#[6e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_entry_main
 </UL>
