@@ -33,6 +33,11 @@
 ".\objects\usart.o"
 ".\objects\main.o"
 ".\objects\stm32f10x_it.o"
+".\objects\base64.o"
+".\objects\cjson.o"
+".\objects\hmac_sha1.o"
+".\objects\mqttkit.o"
+".\objects\onenet.o"
 --strict --scatter ".\Objects\Project.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers

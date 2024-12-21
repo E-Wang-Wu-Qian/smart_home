@@ -6,6 +6,8 @@
 #include "LED.h"
 #include "Key.h"
 
+#include "onenet.h"
+
 #include <string.h>
 
 #define ESP8266_ONENET_INFO "AT+CIPSTART=\"TCP\",\"mqtts.heclouds.com\",1883\r\n"
@@ -31,6 +33,20 @@ int main(void)
 	while (ESP8266_SendCmd(ESP8266_ONENET_INFO, "CONNECT"))
 		Delay_ms(500);
 	UsartPrintf(USART1, "Connect MQTT Server Success\r\n");
+
+
+	// 设备登录
+	UsartPrintf(USART1, "Device Login...\r\n");
+	while (OneNet_DevLink())
+	{
+		ESP8266_SendCmd(ESP8266_ONENET_INFO, "CONNECT");
+		Delay_ms(500);
+	}
+
+	UsartPrintf(USART1, "Device Login Success\r\n");
+
+
+
 
 	while (1)
 	{

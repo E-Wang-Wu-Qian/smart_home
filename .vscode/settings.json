@@ -2,6 +2,13 @@
     "files.associations": {
         "delay.h": "c",
         "string.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "hmac_sha1.h": "c",
+        "mqttkit.h": "c",
+        "usart.h": "c",
+        "common.h": "c",
+        "onenet.h": "c",
+        "stdlib.h": "c",
+        "esp8266.h": "c"
     }
 }

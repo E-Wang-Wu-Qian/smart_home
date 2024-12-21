@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F10X_MD,USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>.\Start;.\User;.\Library;.\System;.\Hardware</IncludePath>
+              <IncludePath>.\Start;.\User;.\Library;.\System;.\Hardware;.\NET\inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -746,6 +746,36 @@
               <FileName>stm32f10x_it.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\User\stm32f10x_it.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>NET</GroupName>
+          <Files>
+            <File>
+              <FileName>base64.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\NET\base64.c</FilePath>
+            </File>
+            <File>
+              <FileName>cJSON.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\NET\cJSON.c</FilePath>
+            </File>
+            <File>
+              <FileName>hmac_sha1.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\NET\hmac_sha1.c</FilePath>
+            </File>
+            <File>
+              <FileName>MqttKit.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\NET\MqttKit.c</FilePath>
+            </File>
+            <File>
+              <FileName>onenet.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\NET\onenet.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -21,7 +21,7 @@ void ESP8266_Clear(void)
     esp8266_cnt = 0;
 }
 
-_Bool ESP8266_WaitReceive(void)
+_Bool ESP8266_WaitRecive(void)
 {
     if (esp8266_cnt == 0)
     {
@@ -54,7 +54,7 @@ _Bool ESP8266_SendCmd(char *cmd, char *res)
 
     while (timeout--)
     {
-        if (ESP8266_WaitReceive() == REV_OK)
+        if (ESP8266_WaitRecive() == REV_OK)
         {
     
             if (strstr((const char *)esp8266_buf, res) != NULL) // 如果检索到关键词
@@ -111,4 +111,79 @@ void USART2_IRQHandler(void)
         USART_ClearFlag(USART2, USART_FLAG_RXNE);
         // USART_ClearITPendingBit(USART2, USART_IT_RXNE);
     }
+}
+
+
+
+//==========================================================
+//	函数名称：	ESP8266_SendData
+//
+//	函数功能：	发送数据
+//
+//	入口参数：	data：数据
+//				len：长度
+//
+//	返回参数：	无
+//
+//	说明：		
+//==========================================================
+void ESP8266_SendData(unsigned char *data, unsigned short len)
+{
+
+	char cmdBuf[32];
+	
+	ESP8266_Clear();								//清空接收缓存
+	sprintf(cmdBuf, "AT+CIPSEND=%d\r\n", len);		//发送命令
+	if(!ESP8266_SendCmd(cmdBuf, ">"))				//收到‘>’时可以发送数据
+	{
+		Usart_SendString(USART2, data, len);		//发送设备连接请求数据
+	}
+
+}
+
+//==========================================================
+//	函数名称：	ESP8266_GetIPD
+//
+//	函数功能：	获取平台返回的数据
+//
+//	入口参数：	等待的时间(乘以10ms)
+//
+//	返回参数：	平台返回的原始数据
+//
+//	说明：		不同网络设备返回的格式不同，需要去调试
+//				如ESP8266的返回格式为	"+IPD,x:yyy"	x代表数据长度，yyy是数据内容
+//==========================================================
+unsigned char *ESP8266_GetIPD(unsigned short timeOut)
+{
+
+	char *ptrIPD = NULL;
+	
+	do
+	{
+		if(ESP8266_WaitRecive() == REV_OK)								//如果接收完成
+		{
+			ptrIPD = strstr((char *)esp8266_buf, "IPD,");				//搜索“IPD”头
+			if(ptrIPD == NULL)											//如果没找到，可能是IPD头的延迟，还是需要等待一会，但不会超过设定的时间
+			{
+				//UsartPrintf(USART1, "\"IPD\" not found\r\n");
+			}
+			else
+			{
+				ptrIPD = strchr(ptrIPD, ':');							//找到':'
+				if(ptrIPD != NULL)
+				{
+					ptrIPD++;
+					return (unsigned char *)(ptrIPD);
+				}
+				else
+					return NULL;
+				
+			}
+		}
+		
+		Delay_ms(5);													//延时等待
+	} while(timeOut--);
+	
+	return NULL;														//超时还未找到，返回空指针
+
 }
