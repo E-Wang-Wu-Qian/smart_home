@@ -3,7 +3,7 @@
 #include "Usart.h"
 #include "esp8266.h"
 #include "onenet.h"
-
+#include "LED.h"
 
 #include "esp8266.h"
 
@@ -254,5 +254,100 @@ _Bool OneNet_DevLink(void)
 		UsartPrintf(USART1, "WARN:	MQTT_PacketConnect Failed\r\n");
 	
 	return status;
+	
+}
+
+
+
+extern uint8_t temp,humi;
+/// @brief 拼装生成要发送的JSON数据
+/// @param buf 
+/// @return 
+/*   JSON数据格式
+{
+	"id": "123",
+	"version": "1.0",
+	"params": {
+		"humi": {
+			"value": 66
+		},
+		"temp": {
+			"value": 23
+		},
+		"led": {
+			"value": true
+		}
+	}
+}
+ */
+unsigned char OneNet_FillBuf(char *buf)
+{
+	
+	char text[48];
+	
+	memset(text, 0, sizeof(text));
+	
+	strcpy(buf, "{\"id\":\"123\",\"params\":{");
+	
+	memset(text, 0, sizeof(text));
+	sprintf(text, "\"temp\":{\"value\":%d},", temp);
+	strcat(buf, text);
+	
+	memset(text, 0, sizeof(text));
+	sprintf(text, "\"humi\":{\"value\":%d},", humi);
+	strcat(buf, text);
+	
+	memset(text, 0, sizeof(text));
+	sprintf(text, "\"led\":{\"value\":%s}", led_info.Led_Status ? "true" : "false");
+	strcat(buf, text);
+	
+	strcat(buf, "}}");
+	
+	return strlen(buf);
+
+}
+
+
+//==========================================================
+//	函数名称：	OneNet_SendData
+//
+//	函数功能：	上传数据到平台
+//
+//	入口参数：	type：发送数据的格式
+//
+//	返回参数：	无
+//
+//	说明：		
+//==========================================================
+void OneNet_SendData(void)
+{
+	
+	MQTT_PACKET_STRUCTURE mqttPacket = {NULL, 0, 0, 0};												//协议包
+	
+	char buf[256];
+	
+	short body_len = 0, i = 0;
+	
+	UsartPrintf(USART1, "Tips:	OneNet_SendData-MQTT\r\n");
+	
+	memset(buf, 0, sizeof(buf));
+	
+	body_len = OneNet_FillBuf(buf);																	//获取当前需要发送的数据流的总长度
+	
+	if(body_len)
+	{
+		if(MQTT_PacketSaveData(PROID, DEVICE_NAME, body_len, NULL, &mqttPacket) == 0)				//封包
+		{
+			for(; i < body_len; i++)
+				mqttPacket._data[mqttPacket._len++] = buf[i];
+			
+			ESP8266_SendData(mqttPacket._data, mqttPacket._len);									//上传数据到平台
+			UsartPrintf(USART1, "Send %d Bytes\r\n", mqttPacket._len);
+			
+			MQTT_DeleteBuffer(&mqttPacket);															//删包
+		}
+		else
+			UsartPrintf(USART1, "WARN:	EDP_NewBuffer Failed\r\n");
+	}
 	
 }

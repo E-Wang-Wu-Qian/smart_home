@@ -21,7 +21,7 @@ void LED_Set(_Bool status)
 {
 	if(status == LED_ON)
 		GPIO_ResetBits(GPIOC, GPIO_Pin_13);
-	else if(status == LED_OFF)
+	else 
 		GPIO_SetBits(GPIOC, GPIO_Pin_13);
 
 	led_info.Led_Status = status;
