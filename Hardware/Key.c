@@ -32,22 +32,21 @@ void Key_Init(void)
 	NVIC_Init(&NVIC_InitStructure);
 }
 
-
-
 void EXTI1_IRQHandler(void)
 {
 
-	// if (EXTI_GetITStatus(EXTI_Line1) != RESET)
-	// {
-	if (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_1) == 0)
+	if (EXTI_GetITStatus(EXTI_Line1) != RESET)
 	{
-		if (led_info.Led_Status == LED_ON)
-			LED_Set(LED_OFF);
-		else
-			LED_Set(LED_ON);
+		//Delay_ms(10);
+		if (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_1) == 0)
+		{
+			if (led_info.Led_Status == LED_ON)
+				LED_Set(LED_OFF);
+			else
+				LED_Set(LED_ON);
+		}
+		EXTI_ClearITPendingBit(EXTI_Line1);
 	}
-	EXTI_ClearITPendingBit(EXTI_Line1);
-	// }
 }
 
 // uint8_t Key_Get(void)

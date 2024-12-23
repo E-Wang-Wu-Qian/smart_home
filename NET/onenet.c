@@ -329,7 +329,7 @@ void OneNet_SendData(void)
 	
 	short body_len = 0, i = 0;
 	
-	UsartPrintf(USART1, "Tips:	OneNet_SendData-MQTT\r\n");
+	//UsartPrintf(USART1, "Tips:	OneNet_SendData-MQTT\r\n");
 	
 	memset(buf, 0, sizeof(buf));
 	
@@ -446,9 +446,9 @@ void OneNet_RevPro(unsigned char *cmd)
 	
 	short result = 0;
 
-	char *dataPtr = NULL;
-	char numBuf[10];
-	int num = 0;
+	// char *dataPtr = NULL;
+	// char numBuf[10];
+	// int num = 0;
 	
 	cJSON *raw_json, *params_json, *led_json;
 	
@@ -466,21 +466,27 @@ void OneNet_RevPro(unsigned char *cmd)
 																	cmdid_topic, topic_len, req_payload, req_len);
 
 //-------------------------------------------------------------------------------------------------------
-				// data_ptr = strstr(cmdid_topic, "request/");									//查找cmdid
-				// if(data_ptr)
-				// {
-				// 	char topic_buf[80], cmdid[40];
+// {
+// 	"id": "2",
+// 	"code": 200,
+// 	"msg": "success"
+// }
+//其中id为下行数据的id，需要匹配，code为200代表成功，msg可以自定义。
+				data_ptr = strstr(cmdid_topic, "request/");									//查找cmdid
+				if(data_ptr)
+				{
+					char topic_buf[80], cmdid[40];
 					
-				// 	data_ptr = strchr(data_ptr, '/');
-				// 	data_ptr++;
+					data_ptr = strchr(data_ptr, '/');
+					data_ptr++;
 					
-				// 	memcpy(cmdid, data_ptr, 36);											//复制cmdid
-				// 	cmdid[36] = 0;
-					
-				// 	snprintf(topic_buf, sizeof(topic_buf), "$sys/%s/%s/cmd/response/%s",
-				// 											PROID, DEVICE_NAME, cmdid);
-				// 	OneNET_Publish(topic_buf, "ojbk");										//回复命令
-				// }
+					memcpy(cmdid, data_ptr, 36);											//复制cmdid
+					cmdid[36] = 0;
+					//$sys/{pid}/{device-name}/thing/property/set_reply
+					snprintf(topic_buf, sizeof(topic_buf), "$sys/%s/%s/thing/property/set_reply",
+															PROID, DEVICE_NAME);
+					OneNET_Publish(topic_buf, "ojbk");										//回复命令
+				}
 //-------------------------------------------------------------------------------------------------------
 				
 				raw_json = cJSON_Parse(req_payload);

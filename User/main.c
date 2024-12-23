@@ -5,6 +5,7 @@
 #include "esp8266.h"
 #include "LED.h"
 #include "Key.h"
+#include "dht11.h"
 
 #include "onenet.h"
 
@@ -12,7 +13,7 @@
 
 #define ESP8266_ONENET_INFO "AT+CIPSTART=\"TCP\",\"mqtts.heclouds.com\",1883\r\n"
 
-uint8_t temp = 50, humi = 10;
+uint8_t temp, humi;
 
 int main(void)
 {
@@ -26,10 +27,16 @@ int main(void)
 	Usart1_Init(115200);
 	Usart2_Init(115200);
 
+	UsartPrintf(USART1, " USART init OK\r\n");
+
 	Key_Init();
 	LED_Init();
 
-	UsartPrintf(USART1, " USART init OK\r\n");
+	while (DHT11_Init())
+	{
+		UsartPrintf(USART1, "DHT11 Error \r\n");
+		Delay_ms(1000);
+	}
 
 	ESP8266_Init();
 
@@ -54,9 +61,10 @@ int main(void)
 	{
 		if (++timeCount >= 100) // 发送间隔5s
 		{
-			// DHT11_Read_Data(&temp, &humi);
+			DHT11_Read_Data(&temp, &humi);
 
-			//UsartPrintf(USART1, "OneNet_SendData\r\n");
+			UsartPrintf(USART1, "temp:%d,humi:%d\r\n", temp, humi);
+			
 			OneNet_SendData(); // 发送数据
 
 			timeCount = 0;
