@@ -18,6 +18,7 @@
 //算法
 #include "base64.h"
 #include "hmac_sha1.h"
+#include "cJSON.h"
 
 #define PROID "MKV16M8zBo"
 
@@ -350,4 +351,181 @@ void OneNet_SendData(void)
 			UsartPrintf(USART1, "WARN:	EDP_NewBuffer Failed\r\n");
 	}
 	
+}
+
+//==========================================================
+//	函数名称：	OneNET_Subscribe
+//
+//	函数功能：	订阅
+//
+//	入口参数：	无
+//
+//	返回参数：	无
+//
+//	说明：		
+//==========================================================
+void OneNET_Subscribe(void)
+{
+	
+	MQTT_PACKET_STRUCTURE mqtt_packet = {NULL, 0, 0, 0};						//协议包
+	
+	char topic_buf[56];
+	const char *topic = topic_buf;
+	
+	snprintf(topic_buf, sizeof(topic_buf), "$sys/%s/%s/thing/property/set", PROID, DEVICE_NAME);
+	
+	UsartPrintf(USART1, "Subscribe Topic: %s\r\n", topic_buf);
+	
+	if(MQTT_PacketSubscribe(MQTT_SUBSCRIBE_ID, MQTT_QOS_LEVEL0, &topic, 1, &mqtt_packet) == 0)
+	{
+		ESP8266_SendData(mqtt_packet._data, mqtt_packet._len);					//向平台发送订阅请求
+		
+		MQTT_DeleteBuffer(&mqtt_packet);										//删包
+	}
+
+}
+
+
+
+
+//==========================================================
+//	函数名称：	OneNET_Publish
+//
+//	函数功能：	发布消息
+//
+//	入口参数：	topic：发布的主题
+//				msg：消息内容
+//
+//	返回参数：	无
+//
+//	说明：		
+//==========================================================
+void OneNET_Publish(const char *topic, const char *msg)
+{
+
+	MQTT_PACKET_STRUCTURE mqtt_packet = {NULL, 0, 0, 0};						//协议包
+	
+	UsartPrintf(USART1, "Publish Topic: %s, Msg: %s\r\n", topic, msg);
+	
+	if(MQTT_PacketPublish(MQTT_PUBLISH_ID, topic, msg, strlen(msg), MQTT_QOS_LEVEL0, 0, 1, &mqtt_packet) == 0)
+	{
+		ESP8266_SendData(mqtt_packet._data, mqtt_packet._len);					//向平台发送订阅请求
+		
+		MQTT_DeleteBuffer(&mqtt_packet);										//删包
+	}
+
+}
+
+
+
+
+//==========================================================
+//	函数名称：	OneNet_RevPro
+//
+//	函数功能：	平台返回数据检测
+//
+//	入口参数：	dataPtr：平台返回的数据
+//
+//	返回参数：	无
+//
+//	说明：		
+//==========================================================
+void OneNet_RevPro(unsigned char *cmd)
+{
+	
+	char *req_payload = NULL;
+	char *cmdid_topic = NULL;
+	
+	unsigned short topic_len = 0;
+	unsigned short req_len = 0;
+	
+	unsigned char qos = 0;
+	static unsigned short pkt_id = 0;
+	
+	unsigned char type = 0;
+	
+	short result = 0;
+
+	char *dataPtr = NULL;
+	char numBuf[10];
+	int num = 0;
+	
+	cJSON *raw_json, *params_json, *led_json;
+	
+	type = MQTT_UnPacketRecv(cmd);
+	switch(type)
+	{
+		case MQTT_PKT_PUBLISH:																//接收的Publish消息
+		
+			result = MQTT_UnPacketPublish(cmd, &cmdid_topic, &topic_len, &req_payload, &req_len, &qos, &pkt_id);
+			if(result == 0)
+			{
+				char *data_ptr = NULL;
+				
+				UsartPrintf(USART1, "topic: %s, topic_len: %d, payload: %s, payload_len: %d\r\n",
+																	cmdid_topic, topic_len, req_payload, req_len);
+
+//-------------------------------------------------------------------------------------------------------
+				// data_ptr = strstr(cmdid_topic, "request/");									//查找cmdid
+				// if(data_ptr)
+				// {
+				// 	char topic_buf[80], cmdid[40];
+					
+				// 	data_ptr = strchr(data_ptr, '/');
+				// 	data_ptr++;
+					
+				// 	memcpy(cmdid, data_ptr, 36);											//复制cmdid
+				// 	cmdid[36] = 0;
+					
+				// 	snprintf(topic_buf, sizeof(topic_buf), "$sys/%s/%s/cmd/response/%s",
+				// 											PROID, DEVICE_NAME, cmdid);
+				// 	OneNET_Publish(topic_buf, "ojbk");										//回复命令
+				// }
+//-------------------------------------------------------------------------------------------------------
+				
+				raw_json = cJSON_Parse(req_payload);
+				params_json = cJSON_GetObjectItem(raw_json,"params");
+				led_json = cJSON_GetObjectItem(params_json,"led");
+				if(led_json != NULL)
+				{
+					if(led_json->type == cJSON_True) LED_Set(LED_ON);
+					else LED_Set(LED_OFF);
+				}
+				
+				cJSON_Delete(raw_json);
+				
+			}
+			
+		case MQTT_PKT_PUBACK:														//发送Publish消息，平台回复的Ack
+		
+			if(MQTT_UnPacketPublishAck(cmd) == 0)
+				UsartPrintf(USART1, "Tips:	MQTT Publish Send OK\r\n");
+			
+		break;
+		
+		case MQTT_PKT_SUBACK:																//发送Subscribe消息的Ack
+		
+			if(MQTT_UnPacketSubscribe(cmd) == 0)
+				UsartPrintf(USART1, "Tips:	MQTT Subscribe OK\r\n");
+			else
+				UsartPrintf(USART1, "Tips:	MQTT Subscribe Err\r\n");
+		
+		break;
+		
+		default:
+			result = -1;
+		break;
+	}
+	
+	ESP8266_Clear();									//清空缓存
+	
+	if(result == -1)
+		return;
+	
+	if(type == MQTT_PKT_CMD || type == MQTT_PKT_PUBLISH)
+	{
+		MQTT_FreeBuffer(cmdid_topic);
+		MQTT_FreeBuffer(req_payload);
+	}
+
 }

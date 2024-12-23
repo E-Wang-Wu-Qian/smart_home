@@ -9,6 +9,7 @@
         "common.h": "c",
         "onenet.h": "c",
         "stdlib.h": "c",
-        "esp8266.h": "c"
+        "esp8266.h": "c",
+        "led.h": "c"
     }
 }

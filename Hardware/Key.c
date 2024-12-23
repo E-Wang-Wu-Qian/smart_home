@@ -36,6 +36,7 @@ void Key_Init(void)
 
 void EXTI1_IRQHandler(void)
 {
+
 	// if (EXTI_GetITStatus(EXTI_Line1) != RESET)
 	// {
 	if (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_1) == 0)

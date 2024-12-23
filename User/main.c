@@ -17,6 +17,7 @@ uint8_t temp = 50, humi = 10;
 int main(void)
 {
 	unsigned short timeCount = 0; // 发送间隔变量
+	unsigned char *dataPtr = NULL;
 
 	OLED_Init();
 
@@ -25,12 +26,10 @@ int main(void)
 	Usart1_Init(115200);
 	Usart2_Init(115200);
 
-
 	Key_Init();
 	LED_Init();
 
 	UsartPrintf(USART1, " USART init OK\r\n");
-
 
 	ESP8266_Init();
 
@@ -49,18 +48,25 @@ int main(void)
 
 	UsartPrintf(USART1, "Device Login Success\r\n");
 
+	OneNET_Subscribe();
+
 	while (1)
 	{
 		if (++timeCount >= 100) // 发送间隔5s
 		{
 			// DHT11_Read_Data(&temp, &humi);
 
-			UsartPrintf(USART1, "OneNet_SendData\r\n");
+			//UsartPrintf(USART1, "OneNet_SendData\r\n");
 			OneNet_SendData(); // 发送数据
 
 			timeCount = 0;
 			ESP8266_Clear();
 		}
+
+		dataPtr = ESP8266_GetIPD(0);
+
+		if (dataPtr != NULL)
+			OneNet_RevPro(dataPtr);
 
 		Delay_ms(10);
 	}
