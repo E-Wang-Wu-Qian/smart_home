@@ -5,7 +5,7 @@
 #include "stm32f10x.h"
 
 
-//PA11
+//PA11-->PA0
 #define DHT11_IO_IN()  {GPIOA->CRL&=0XFFFFFFF0;GPIOA->CRL|=8;}
 #define DHT11_IO_OUT() {GPIOA->CRL&=0XFFFFFFF0;GPIOA->CRL|=3;} 
 //IO操作函数   

@@ -4,6 +4,7 @@
 #include "esp8266.h"
 #include "onenet.h"
 #include "LED.h"
+#include "WH01.h"
 
 #include "esp8266.h"
 
@@ -299,7 +300,11 @@ unsigned char OneNet_FillBuf(char *buf)
 	strcat(buf, text);
 	
 	memset(text, 0, sizeof(text));
-	sprintf(text, "\"led\":{\"value\":%s}", led_info.Led_Status ? "true" : "false");
+	sprintf(text, "\"led\":{\"value\":%s},", led_info.Led_Status ? "true" : "false");
+	strcat(buf, text);
+
+	memset(text, 0, sizeof(text));
+	sprintf(text, "\"wh\":{\"value\":%s}", wh01_info.Wh01_Status ? "true" : "false");
 	strcat(buf, text);
 	
 	strcat(buf, "}}");
@@ -450,7 +455,7 @@ void OneNet_RevPro(unsigned char *cmd)
 	// char numBuf[10];
 	// int num = 0;
 	
-	cJSON *raw_json, *params_json, *led_json;
+	cJSON *raw_json, *params_json, *led_json, *wh_json;
 	
 	type = MQTT_UnPacketRecv(cmd);
 	switch(type)
@@ -492,10 +497,18 @@ void OneNet_RevPro(unsigned char *cmd)
 				raw_json = cJSON_Parse(req_payload);
 				params_json = cJSON_GetObjectItem(raw_json,"params");
 				led_json = cJSON_GetObjectItem(params_json,"led");
+				wh_json = cJSON_GetObjectItem(params_json,"wh");
+
 				if(led_json != NULL)
 				{
 					if(led_json->type == cJSON_True) LED_Set(LED_ON);
 					else LED_Set(LED_OFF);
+				}
+
+				if(wh_json != NULL)
+				{
+					if(wh_json->type == cJSON_True) Wh01_Set();
+					else Wh01_Reset();
 				}
 				
 				cJSON_Delete(raw_json);

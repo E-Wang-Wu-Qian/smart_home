@@ -32,6 +32,7 @@
 .\objects\onenet.o: .\Hardware\esp8266.h
 .\objects\onenet.o: .\NET\inc\onenet.h
 .\objects\onenet.o: .\Hardware\LED.h
+.\objects\onenet.o: .\Hardware\WH01.h
 .\objects\onenet.o: .\NET\inc\MqttKit.h
 .\objects\onenet.o: .\NET\inc\Common.h
 .\objects\onenet.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h

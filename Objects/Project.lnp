@@ -32,6 +32,7 @@
 ".\objects\esp8266.o"
 ".\objects\usart.o"
 ".\objects\dht11.o"
+".\objects\wh01.o"
 ".\objects\main.o"
 ".\objects\stm32f10x_it.o"
 ".\objects\base64.o"

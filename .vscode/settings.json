@@ -10,6 +10,9 @@
         "onenet.h": "c",
         "stdlib.h": "c",
         "esp8266.h": "c",
-        "led.h": "c"
+        "led.h": "c",
+        "WH01.C": "cpp",
+        "wh01.h": "c",
+        "dht11.h": "c"
     }
 }
