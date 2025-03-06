@@ -41,58 +41,77 @@ int main(void)
 		UsartPrintf(USART1, "DHT11 Error \r\n");
 		Delay_ms(1000);
 	}
-/*
-	while (1)
-	{
-
-		Wh01_Set();
-		Delay_ms(5000); // 延时5s
-
-		UsartPrintf(USART1, "DEBUG...\r\n");
-
-		Wh01_Reset();
-		Delay_ms(5000); // 延时5s
-	}
-	*/
-		ESP8266_Init();
-
-		UsartPrintf(USART1, "Connect MQTT Server...\r\n");
-		while (ESP8266_SendCmd(ESP8266_ONENET_INFO, "CONNECT"))
-			Delay_ms(500);
-		UsartPrintf(USART1, "Connect MQTT Server Success\r\n");
-
-		// 设备登录
-		UsartPrintf(USART1, "Device Login...\r\n");
-		while (OneNet_DevLink())
-		{
-			ESP8266_SendCmd(ESP8266_ONENET_INFO, "CONNECT");
-			Delay_ms(500);
-		}
-
-		UsartPrintf(USART1, "Device Login Success\r\n");
-
-		OneNET_Subscribe();
-
+	/*
 		while (1)
 		{
-			if (++timeCount >= 200) // 发送间隔5s
-			{
-				DHT11_Read_Data(&temp, &humi);
 
-				UsartPrintf(USART1, "temp:%d,humi:%d\r\n", temp, humi);
+			Wh01_Set();
+			Delay_ms(5000); // 延时5s
 
-				OneNet_SendData(); // 发送数据
+			UsartPrintf(USART1, "DEBUG...\r\n");
 
-				timeCount = 0;
-				ESP8266_Clear();
-			}
-
-			dataPtr = ESP8266_GetIPD(0);
-
-			if (dataPtr != NULL)
-				OneNet_RevPro(dataPtr);
-
-			Delay_ms(10);
+			Wh01_Reset();
+			Delay_ms(5000); // 延时5s
 		}
-		
+		*/
+	ESP8266_Init();
+
+	UsartPrintf(USART1, "Connect MQTT Server...\r\n");
+	while (ESP8266_SendCmd(ESP8266_ONENET_INFO, "CONNECT"))
+		Delay_ms(500);
+	UsartPrintf(USART1, "Connect MQTT Server Success\r\n");
+
+	// 设备登录
+	UsartPrintf(USART1, "Device Login...\r\n");
+	while (OneNet_DevLink())
+	{
+		ESP8266_SendCmd(ESP8266_ONENET_INFO, "CONNECT");
+		Delay_ms(500);
+	}
+
+	UsartPrintf(USART1, "Device Login Success\r\n");
+
+	OneNET_Subscribe();
+
+	while (1)
+	{
+		if (++timeCount >= 200) // 发送间隔5s
+		{
+			DHT11_Read_Data(&temp, &humi);
+
+			UsartPrintf(USART1, "temp:%d,humi:%d\r\n", temp, humi);
+
+			OLED_ShowString(1, 1, "Temp:");
+			OLED_ShowNum(1, 7, temp, 2);
+			OLED_ShowString(1, 9, "C"); // ℃
+
+			OLED_ShowString(2, 1, "Humi:");
+			OLED_ShowNum(2, 7, humi, 2);
+			OLED_ShowString(2, 9, "%");
+
+			OLED_ShowString(3, 1, "LED:");
+			if (led_info.Led_Status == LED_ON)
+				OLED_ShowString(3, 5, "ON");
+			else
+				OLED_ShowString(3, 5, "OFF");
+
+			OLED_ShowString(4, 1, "WH:");
+			if (wh01_info.Wh01_Status == 1)
+				OLED_ShowString(4, 4, "ON");
+			else
+				OLED_ShowString(4, 4, "OFF");
+
+			OneNet_SendData(); // 发送数据
+
+			timeCount = 0;
+			ESP8266_Clear();
+		}
+
+		dataPtr = ESP8266_GetIPD(0);
+
+		if (dataPtr != NULL)
+			OneNet_RevPro(dataPtr); // 接收平台数据
+
+		Delay_ms(10);
+	}
 }
