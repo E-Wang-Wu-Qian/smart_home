@@ -10,6 +10,8 @@ typedef struct
 
 extern WH01_INFO wh01_info;
 
+extern int32_t  const_humi ;
+
 void Wh01_Init(void);
 
 void Wh01_Set(void);

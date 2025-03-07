@@ -1,10 +1,13 @@
 #include "stm32f10x.h" // Device header
 #include "WH01.h"
 #include "OLED.h"
+#include "dht11.h"
 
 #define WH GPIO_Pin_6 // PA6, 用于控制WH01的电源
 
 WH01_INFO wh01_info = {0};
+
+int32_t const_humi = 40;
 
 void Wh01_Init(void)
 {
@@ -22,7 +25,15 @@ void Wh01_Init(void)
 
 void Wh01_Set(void)
 {
-    GPIO_SetBits(GPIOA, WH);
+    if(humi < const_humi)
+    {
+       GPIO_SetBits(GPIOA, WH);
+    }
+    else
+    {
+        GPIO_ResetBits(GPIOA, WH);
+    }
+  
     wh01_info.Wh01_Status = 1;
     // OLED_Clear();
 

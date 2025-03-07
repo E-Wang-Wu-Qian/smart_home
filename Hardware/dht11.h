@@ -5,6 +5,8 @@
 #include "stm32f10x.h"
 
 
+extern uint8_t temp, humi;
+
 //PA11-->PA0
 #define DHT11_IO_IN()  {GPIOA->CRL&=0XFFFFFFF0;GPIOA->CRL|=8;}
 #define DHT11_IO_OUT() {GPIOA->CRL&=0XFFFFFFF0;GPIOA->CRL|=3;} 

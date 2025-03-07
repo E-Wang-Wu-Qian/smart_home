@@ -11,6 +11,8 @@
 
 #define DT GPIO_Pin_0
 
+uint8_t temp = 0, humi = 0;
+
 // 复位DHT11 ---->  向DHT11发起开始信号
 void DHT11_Rst(void)
 {

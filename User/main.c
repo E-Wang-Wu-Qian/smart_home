@@ -14,7 +14,7 @@
 
 #define ESP8266_ONENET_INFO "AT+CIPSTART=\"TCP\",\"mqtts.heclouds.com\",1883\r\n"
 
-uint8_t temp, humi;
+
 
 int main(void)
 {
