@@ -3,7 +3,7 @@
 #include "Usart.h"
 #include "esp8266.h"
 #include "Delay.h"
-// C库
+
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>

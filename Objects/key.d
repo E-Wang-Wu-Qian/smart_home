@@ -30,3 +30,4 @@
 .\objects\key.o: .\Library\misc.h
 .\objects\key.o: .\System\Delay.h
 .\objects\key.o: Hardware\LED.h
+.\objects\key.o: Hardware\WH01.h

@@ -75,7 +75,7 @@ int main(void)
 
 	while (1)
 	{
-		if (++timeCount >= 200) // 发送间隔5s
+		if (++timeCount >= 300) // 发送间隔5s
 		{
 			DHT11_Read_Data(&temp, &humi);
 
@@ -103,8 +103,10 @@ int main(void)
 
 			OneNet_SendData(); // 发送数据
 
-			timeCount = 0;
+			
 			ESP8266_Clear();
+
+			timeCount = 0;
 		}
 
 		dataPtr = ESP8266_GetIPD(0);

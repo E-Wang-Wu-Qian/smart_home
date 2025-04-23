@@ -1,11 +1,3 @@
-/***************STM32F103C8T6**********************
- * 文件名  ：DHT11.c
- * 描述    ：DHT11传感器
- * 备注    : DHT11温度湿度传感器
- * 接口    ：PA11-DATA
-
-********************LIGEN*************************/
-
 #include "dht11.h"
 #include "Delay.h"
 
@@ -30,7 +22,7 @@ void DHT11_Rst(void)
 uint8_t DHT11_Check(void)
 {
 	uint8_t retry = 0;
-	DHT11_IO_IN();					   // SET INPUT
+	DHT11_IO_IN();					   // INPUT
 	while (DHT11_DQ_IN && retry < 100) // DHT11会拉低40~80us
 	{
 		retry++;
@@ -112,7 +104,7 @@ uint8_t DHT11_Read_Data(uint8_t *temp, uint8_t *humi)
 		{
 			buf[i] = DHT11_Read_Byte();
 		}
-		if ((buf[0] + buf[1] + buf[2] + buf[3]) == buf[4])  // 校验数据,buf[4]存放的是校验和
+		if ((buf[0] + buf[1] + buf[2] + buf[3]) == buf[4])  
 		{
 			*humi = buf[0];
 			*temp = buf[2];
@@ -132,12 +124,12 @@ uint8_t DHT11_Read_Data(uint8_t *temp, uint8_t *humi)
 uint8_t DHT11_Init(void)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE); // 使能PG端口时钟
-	GPIO_InitStructure.GPIO_Pin = DT;					  // PG11端口配置
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE); 
+	GPIO_InitStructure.GPIO_Pin = DT;					  
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;	  // 推挽输出
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_Init(GPIOA, &GPIO_InitStructure); // 初始化IO口
-	GPIO_SetBits(GPIOA, DT);			   // PG11 输出高
+	GPIO_Init(GPIOA, &GPIO_InitStructure); 
+	GPIO_SetBits(GPIOA, DT);			   
 
 	DHT11_Rst();		  // 复位DHT11
 	return DHT11_Check(); // 等待DHT11的回应

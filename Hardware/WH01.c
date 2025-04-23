@@ -7,7 +7,9 @@
 
 WH01_INFO wh01_info = {0};
 
-int32_t const_humi = 40;
+int32_t const_humi = 60;
+
+int32_t x_timing = 0;
 
 void Wh01_Init(void)
 {
@@ -25,39 +27,42 @@ void Wh01_Init(void)
 
 void Wh01_Set(void)
 {
-    if(humi < const_humi)
-    {
-       GPIO_SetBits(GPIOA, WH);
-    }
-    else
-    {
-        GPIO_ResetBits(GPIOA, WH);
-    }
-  
+
+    //GPIO_SetBits(GPIOA, WH);
+    GPIO_ResetBits(GPIOA, WH);
     wh01_info.Wh01_Status = 1;
+
     // OLED_Clear();
 
     if (wh01_info.Wh01_Status == 1)
     {
-        OLED_ShowString(4, 4, "        ");
+        OLED_ShowString(4, 4, "     ");
         OLED_ShowString(4, 4, "ON");
     }
 
     else
     {
-        OLED_ShowString(4, 4, "        ");
+        OLED_ShowString(4, 4, "     ");
         OLED_ShowString(4, 4, "OFF");
     }
 }
 
 void Wh01_Reset(void)
 {
-    GPIO_ResetBits(GPIOA, WH);
+   // GPIO_ResetBits(GPIOA, WH);
+   GPIO_SetBits(GPIOA, WH);
     wh01_info.Wh01_Status = 0;
     // OLED_Clear();
 
     if (wh01_info.Wh01_Status == 1)
+    {
+        OLED_ShowString(4, 4, "        ");
         OLED_ShowString(4, 4, "ON");
+    }
+
     else
+    {
+        OLED_ShowString(4, 4, "        ");
         OLED_ShowString(4, 4, "OFF");
+    }
 }

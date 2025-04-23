@@ -324,7 +324,11 @@ unsigned char OneNet_FillBuf(char *buf)
 	strcat(buf, text);
 
 	memset(text, 0, sizeof(text));
-	sprintf(text, "\"const_humi\":{\"value\":%d}", const_humi);
+	sprintf(text, "\"const_humi\":{\"value\":%d},", const_humi);
+	strcat(buf, text);
+
+	memset(text, 0, sizeof(text));
+	sprintf(text, "\"x_timing\":{\"value\":%d}", x_timing);
 	strcat(buf, text);
 
 	strcat(buf, "}}");
@@ -356,7 +360,7 @@ void OneNet_SendData(void)
 
 	memset(buf, 0, sizeof(buf));
 
-	body_len = OneNet_FillBuf(buf); // 获取当前需要发送的数据流的总长度
+	body_len = OneNet_FillBuf(buf); // 获取当前需要发送的数据流的总长度,同时拼接要上报的数据
 
 	if (body_len)
 	{
@@ -436,7 +440,7 @@ void OneNET_Publish(const char *topic, const char *msg)
 //==========================================================
 //	函数名称：	OneNet_RevPro
 //
-//	函数功能：	平台返回数据检测
+//	函数功能：	平台返回数据检测(解析)
 //
 //	入口参数：	dataPtr：平台返回的数据
 //
@@ -446,6 +450,9 @@ void OneNET_Publish(const char *topic, const char *msg)
 //==========================================================
 void OneNet_RevPro(unsigned char *cmd)
 {
+
+	int32_t id = 0;
+	int32_t code = 200;
 
 	char *req_payload = NULL;
 	char *cmdid_topic = NULL;
@@ -464,7 +471,7 @@ void OneNet_RevPro(unsigned char *cmd)
 	// char numBuf[10];
 	// int num = 0;
 
-	cJSON *raw_json, *params_json, *led_json, *wh_json, *const_humi_json;
+	cJSON *raw_json, *params_json, *led_json, *wh_json, *const_humi_json, *x_timing_json, *id_json;
 
 	type = MQTT_UnPacketRecv(cmd);
 	switch (type)
@@ -474,10 +481,45 @@ void OneNet_RevPro(unsigned char *cmd)
 		result = MQTT_UnPacketPublish(cmd, &cmdid_topic, &topic_len, &req_payload, &req_len, &qos, &pkt_id);
 		if (result == 0)
 		{
-			char *data_ptr = NULL;
+			// char *data_ptr = NULL;
 
 			UsartPrintf(USART1, "topic: %s, topic_len: %d, payload: %s, payload_len: %d\r\n",
 						cmdid_topic, topic_len, req_payload, req_len);
+
+			raw_json = cJSON_Parse(req_payload);
+
+			// id_json = cJSON_GetObjectItem(raw_json, "id");
+
+			// if (id_json != NULL)
+			// {
+			// 	if (id_json->type == cJSON_Number)
+			// 	{
+			// 		id = id_json->valueint;
+			// 		UsartPrintf(USART1, "id: %d\r\n" , id);
+			// 	}
+
+			// }
+
+			// if (id != 0)
+			// {
+			// 	char text[48];
+			// 	char topic_buf[80];
+			// 	memset(text, 0, sizeof(text));
+
+			// 	strcpy(text, "{\"id\":");
+			// 	sprintf(text + 5, "%d", id);
+			// 	strcat(text, ",\"code\":");
+			// 	sprintf(text + strlen(text), "%d", code);
+			// 	strcat(text, ",\"msg\":\"success\"}");
+
+			// 	//$sys/{pid}/{device-name}/thing/property/set_reply
+			// 	snprintf(topic_buf, sizeof(topic_buf), "$sys/%s/%s/thing/property/set_reply",
+			// 			 PROID, DEVICE_NAME);
+
+			// 	UsartPrintf(USART1, "Reply Topic: %s, Msg: %s\r\n", topic_buf, text);
+
+			// 	OneNET_Publish(topic_buf, text); // 回复命令
+			// }
 
 			//-------------------------------------------------------------------------------------------------------
 			// {
@@ -486,28 +528,21 @@ void OneNet_RevPro(unsigned char *cmd)
 			// 	"msg": "success"
 			// }
 			// 其中id为下行数据的id，需要匹配，code为200代表成功，msg可以自定义。
-			data_ptr = strstr(cmdid_topic, "request/"); // 查找cmdid
-			if (data_ptr)
-			{
-				char topic_buf[80], cmdid[40];
 
-				data_ptr = strchr(data_ptr, '/');
-				data_ptr++;
+			// data_ptr = strstr(cmdid_topic, "request/"); // 查找cmdid
 
-				memcpy(cmdid, data_ptr, 36); // 复制cmdid
-				cmdid[36] = 0;
-				//$sys/{pid}/{device-name}/thing/property/set_reply
-				snprintf(topic_buf, sizeof(topic_buf), "$sys/%s/%s/thing/property/set_reply",
-						 PROID, DEVICE_NAME);
-				OneNET_Publish(topic_buf, "ojbk"); // 回复命令
-			}
+			// data_ptr = strchr(data_ptr, '/');
+			// data_ptr++;
+
+			// memcpy(cmdid, data_ptr, 36); // 复制cmdid
+			// cmdid[36] = 0;
+
 			//-------------------------------------------------------------------------------------------------------
-
-			raw_json = cJSON_Parse(req_payload);
 			params_json = cJSON_GetObjectItem(raw_json, "params");
 			led_json = cJSON_GetObjectItem(params_json, "led");
 			wh_json = cJSON_GetObjectItem(params_json, "wh");
 			const_humi_json = cJSON_GetObjectItem(params_json, "const_humi");
+			x_timing_json = cJSON_GetObjectItem(params_json, "x_timing");
 
 			if (led_json != NULL)
 			{
@@ -517,22 +552,79 @@ void OneNet_RevPro(unsigned char *cmd)
 					LED_Set(LED_OFF);
 			}
 
+			// if (wh_json != NULL)
+			// {
+			// 	if (const_humi_json != NULL && const_humi_json->type == cJSON_Number)
+			// 	{
+			// 		const_humi = const_humi_json->valueint;
+			// 	}
+			// 	if (wh_json->type == cJSON_True)
+			// 	{
+			// 		if (const_humi_json != NULL && const_humi_json->type == cJSON_Number)
+			// 		{
+			// 			const_humi = const_humi_json->valueint;
+			// 			if(const_humi > humi)
+			// 			{
+			// 				Wh01_Set();
+			// 			}
+			// 			else
+			// 			{
+			// 				Wh01_Reset();
+			// 			}
+			// 		}
+			// 		else
+			// 		{
+			// 			Wh01_Set();
+			// 		}
+			// 	}
+			// 	else
+			// 	{
+			// 		Wh01_Reset();
+			// 	}
+					
+			// }
+
 			if (wh_json != NULL)
 			{
+
 				if (wh_json->type == cJSON_True)
+				{											
 					Wh01_Set();
+				}
 				else
+				{
 					Wh01_Reset();
+				}
+
+					
 			}
 
-			if(const_humi_json != NULL)
+			if (const_humi_json != NULL)
 			{
-				if(const_humi_json->type == cJSON_Number)
+				if (const_humi_json->type == cJSON_Number)
+				{
 					const_humi = const_humi_json->valueint;
+					if(const_humi > humi)
+						Wh01_Set();
+					else
+						Wh01_Reset();
+						
+				}
 			}
 
+			if (x_timing_json != NULL)
+			{
+				if (x_timing_json->type == cJSON_Number)
+				{
+					x_timing = x_timing_json->valueint;
+					UsartPrintf(USART1, "x_timing: %d\r\n", x_timing);
+				}
+			}
 
 			cJSON_Delete(raw_json);
+
+			MQTT_PACKET_STRUCTURE mqttPacket = {NULL, 0, 0, 0}; // 协议包
+			MQTT_PacketPublishAck(pkt_id, &mqttPacket);			// 发送Ack
 		}
 
 	case MQTT_PKT_PUBACK: // 发送Publish消息，平台回复的Ack
