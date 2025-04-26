@@ -109,10 +109,10 @@ int main(void)
 			timeCount = 0;
 		}
 
-		dataPtr = ESP8266_GetIPD(0);
+		dataPtr = ESP8266_GetIPD(0);  // 接收平台数据
 
 		if (dataPtr != NULL)
-			OneNet_RevPro(dataPtr); // 接收平台数据
+			OneNet_RevPro(dataPtr); // 解析返回数据
 
 		Delay_ms(10);
 	}
