@@ -28,6 +28,7 @@ int main(void)
 
 	Usart1_Init(115200);
 	Usart2_Init(115200);
+	Usart3_Init(115200);
 
 	UsartPrintf(USART1, " USART init OK\r\n");
 

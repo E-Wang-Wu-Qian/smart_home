@@ -23,7 +23,7 @@ uint8_t DHT11_Check(void)
 {
 	uint8_t retry = 0;
 	DHT11_IO_IN();					   // INPUT
-	while (DHT11_DQ_IN && retry < 100) // DHT11会拉低40~80us
+	while (DHT11_DQ_IN && retry < 100) // DHT11会拉低83us
 	{
 		retry++;
 		Delay_us(1);
@@ -34,7 +34,7 @@ uint8_t DHT11_Check(void)
 		return 1;
 	else
 		retry = 0;
-	while (!DHT11_DQ_IN && retry < 100) // DHT11拉低后会再次拉高40~80us
+	while (!DHT11_DQ_IN && retry < 100) // DHT11拉低后会再次拉高87us
 	{
 		retry++;
 		Delay_us(1);
@@ -50,7 +50,7 @@ uint8_t DHT11_Check(void)
 uint8_t DHT11_Read_Bit(void)
 {
 	uint8_t retry = 0;
-	while (DHT11_DQ_IN && retry < 100) // 等待变为低电平  每一位数据以50us低电平开始
+	while (DHT11_DQ_IN && retry < 100) // 等待变为低电平  每一位数据以54us低电平开始
 	{
 		retry++;
 		Delay_us(1);
@@ -61,7 +61,7 @@ uint8_t DHT11_Read_Bit(void)
 		retry++;
 		Delay_us(1);
 	}
-	Delay_us(40); // 等待40us   26-28us为0，70us为1
+	Delay_us(40); // 等待40us   23-27us为0，68-74us为1
 	// 通过判断高电平的持续时间判断数据是1还是0
 	if (DHT11_DQ_IN)
 		return 1;
