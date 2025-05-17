@@ -36,5 +36,6 @@
 .\objects\main.o: .\Hardware\Key.h
 .\objects\main.o: .\Hardware\dht11.h
 .\objects\main.o: .\Hardware\WH01.h
+.\objects\main.o: .\Hardware\Timer.h
 .\objects\main.o: .\NET\inc\onenet.h
 .\objects\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
