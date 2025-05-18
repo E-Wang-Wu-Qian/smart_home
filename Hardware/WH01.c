@@ -9,7 +9,6 @@ WH01_INFO wh01_info = {0};
 
 int32_t const_humi = 60;
 
-int32_t x_timing = 0;
 
 void Wh01_Init(void)
 {

@@ -8,14 +8,10 @@
 #include "dht11.h"
 #include "WH01.h"
 #include "Timer.h"
-
 #include "onenet.h"
-
 #include <string.h>
 
 #define ESP8266_ONENET_INFO "AT+CIPSTART=\"TCP\",\"mqtts.heclouds.com\",1883\r\n"
-
-
 
 int main(void)
 {
@@ -37,6 +33,9 @@ int main(void)
 	LED_Init();
 
 	Wh01_Init();
+
+	Timer2_Init(10000 - 1, 7200 - 1);
+	Timer3_Init(60 - 1, 1 - 1);
 
 	while (DHT11_Init())
 	{
@@ -83,6 +82,8 @@ int main(void)
 
 			UsartPrintf(USART1, "temp:%d,humi:%d\r\n", temp, humi);
 
+			TIM_Set();
+
 			OLED_ShowString(1, 1, "Temp:");
 			OLED_ShowNum(1, 7, temp, 2);
 			OLED_ShowString(1, 9, "C"); // ℃
@@ -105,13 +106,12 @@ int main(void)
 
 			OneNet_SendData(); // 发送数据
 
-			
 			ESP8266_Clear();
 
 			timeCount = 0;
 		}
 
-		dataPtr = ESP8266_GetIPD(0);  // 接收平台数据
+		dataPtr = ESP8266_GetIPD(0); // 接收平台数据
 
 		if (dataPtr != NULL)
 			OneNet_RevPro(dataPtr); // 解析返回数据

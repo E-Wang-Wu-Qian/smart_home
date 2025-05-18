@@ -5,6 +5,7 @@
 #include "onenet.h"
 #include "LED.h"
 #include "WH01.h"
+#include "Timer.h"
 
 #include "esp8266.h"
 
@@ -581,22 +582,20 @@ void OneNet_RevPro(unsigned char *cmd)
 			// 	{
 			// 		Wh01_Reset();
 			// 	}
-					
+
 			// }
 
 			if (wh_json != NULL)
 			{
 
 				if (wh_json->type == cJSON_True)
-				{											
+				{
 					Wh01_Set();
 				}
 				else
 				{
 					Wh01_Reset();
 				}
-
-					
 			}
 
 			if (const_humi_json != NULL)
@@ -604,11 +603,10 @@ void OneNet_RevPro(unsigned char *cmd)
 				if (const_humi_json->type == cJSON_Number)
 				{
 					const_humi = const_humi_json->valueint;
-					if(const_humi > humi)
+					if (const_humi > humi)
 						Wh01_Set();
 					else
 						Wh01_Reset();
-						
 				}
 			}
 
@@ -618,6 +616,10 @@ void OneNet_RevPro(unsigned char *cmd)
 				{
 					x_timing = x_timing_json->valueint;
 					UsartPrintf(USART1, "x_timing: %d\r\n", x_timing);
+
+					// 进行定时操作
+
+					
 				}
 			}
 

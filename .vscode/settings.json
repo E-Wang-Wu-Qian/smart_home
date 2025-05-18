@@ -13,6 +13,7 @@
         "led.h": "c",
         "WH01.C": "cpp",
         "wh01.h": "c",
-        "dht11.h": "c"
+        "dht11.h": "c",
+        "timer.h": "c"
     }
 }
